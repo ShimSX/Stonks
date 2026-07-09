@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Dumb mouse">
+  <!-- soft ground glow -->
+  <ellipse cx="32" cy="56" rx="18" ry="4" fill="#059669" opacity="0.15"/>
+  <!-- ears -->
+  <circle cx="16" cy="22" r="12" fill="#f3d1c2"/>
+  <circle cx="48" cy="22" r="12" fill="#f3d1c2"/>
+  <circle cx="16" cy="22" r="7" fill="#f7b0c2"/>
+  <circle cx="48" cy="22" r="7" fill="#f7b0c2"/>
+  <!-- head -->
+  <circle cx="32" cy="34" r="18" fill="#f0c7b0"/>
+  <!-- snout -->
+  <ellipse cx="32" cy="42" rx="9" ry="7" fill="#f7d9cb"/>
+  <!-- nose -->
+  <ellipse cx="32" cy="41" rx="3.2" ry="2.4" fill="#e86a8a"/>
+  <circle cx="31" cy="40.2" r="0.7" fill="#fff" opacity="0.8"/>
+  <!-- derpy eyes: one big, one small, slightly off -->
+  <ellipse cx="24" cy="30" rx="4.2" ry="5" fill="#111827"/>
+  <ellipse cx="40" cy="31" rx="3.2" ry="3.6" fill="#111827"/>
+  <circle cx="25.5" cy="28.5" r="1.4" fill="#fff"/>
+  <circle cx="41" cy="29.8" r="1" fill="#fff"/>
+  <!-- confused eyebrow -->
+  <path d="M20 24 Q24 21 28 24" fill="none" stroke="#8b5e4b" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M37 25 Q41 27 44 24" fill="none" stroke="#8b5e4b" stroke-width="1.6" stroke-linecap="round"/>
+  <!-- buck teeth -->
+  <rect x="28.5" y="44" width="3.2" height="4.5" rx="0.8" fill="#fff"/>
+  <rect x="32.3" y="44" width="3.2" height="4.5" rx="0.8" fill="#fff"/>
+  <!-- whiskers -->
+  <path d="M14 40 H24 M13 43 H24 M15 37 H24" stroke="#8b5e4b" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+  <path d="M40 40 H50 M40 43 H51 M40 37 H49" stroke="#8b5e4b" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+  <!-- tiny green dollar crumb (stonk mouse energy) -->
+  <text x="50" y="14" font-size="11" font-family="system-ui,sans-serif" font-weight="700" fill="#059669">$</text>
+</svg>
