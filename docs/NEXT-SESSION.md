@@ -1,15 +1,15 @@
-# Next session — deploy SS Research live
+# Next session — finish go-live
 
-**Priority when we pick this up again:**
+**Repo is pushed** (`main`). Supabase client + auth + cloud hubs are already in the code.
 
-Ship the app to production with the stack in `docs/PLATFORM-AND-UX.md`:
+**Still for you / next time:**
 
-1. **Vercel** — connect `ShimSX/Stonks`, deploy Vite app (`npm run build` → `dist`)
-2. **Supabase** — project, Auth (magic link / Google), Postgres tables + RLS for hubs/companies
-3. **Wire the app** — replace local-only storage with per-user hubs; seed default template **once** on hub create
-4. **Env vars** on Vercel: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
-5. **Smoke test** — new user signup → empty or sample hub → add company → story persists after refresh
+1. Supabase **SQL Editor** → run `docs/supabase-schema.sql` (if not done)
+2. Supabase **Auth → Redirect URLs** → `http://localhost:5173` + your Vercel URL
+3. **Vercel env vars:** `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` → Redeploy
+4. Smoke test: Sign up → add company → refresh → still there when signed in
+5. Optional: turn off email confirm in Auth for easier testing
 
-Do **not** wipe user data on deploy (stable storage / no forced demo overwrite).
+See also: `docs/SUPABASE-SETUP.md`, `docs/PLATFORM-AND-UX.md`
 
-UX prototype is already in the app (onboarding, quick add, progressive story sheet). Deploy can ship that first; Supabase can follow in the same session or right after Phase 0.
+Do **not** wipe user data on deploy.
