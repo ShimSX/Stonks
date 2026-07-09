@@ -1,6 +1,16 @@
 import type { Company, LynchType } from "./types";
 
-export const STORAGE_KEY = "stunk-stonk-research-hub-v8";
+/** Stable key — do not version-bump for content updates (that wipes user deletes/edits). */
+export const STORAGE_KEY = "ss-research-coverage";
+
+/** Older keys we migrate from once, then leave alone. */
+export const LEGACY_STORAGE_KEYS = [
+  "stunk-stonk-research-hub-v8",
+  "stunk-stonk-research-hub-v7",
+  "stunk-stonk-research-hub-v6",
+  "stunk-stonk-research-hub-v5",
+  "stunk-stonk-research-hub-v4",
+] as const;
 
 export const lynchTypes: { value: LynchType; label: string }[] = [
   { value: "fast-grower", label: "Fast grower" },

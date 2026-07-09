@@ -1,21 +1,53 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { demoCompanies, STORAGE_KEY } from "../constants";
+import { demoCompanies, LEGACY_STORAGE_KEYS, STORAGE_KEY } from "../constants";
 import type { AppState, Company, LynchType, Recommendation } from "../types";
 
-function loadCompanies(): Company[] {
+function normalizeCompany(c: Company): Company {
+  return {
+    ...c,
+    storyUpdates: c.storyUpdates ?? [],
+    domain: c.domain ?? "",
+  };
+}
+
+function readList(key: string): Company[] | null {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-    if (Array.isArray(saved) && saved.length) {
-      return saved.map((c: Company) => ({
-        ...c,
-        storyUpdates: c.storyUpdates ?? [],
-        domain: c.domain ?? "",
-      }));
-    }
-    return structuredClone(demoCompanies);
+    const raw = localStorage.getItem(key);
+    if (raw == null) return null;
+    const parsed = JSON.parse(raw);
+    // Empty array is valid — user may have deleted everything.
+    if (!Array.isArray(parsed)) return null;
+    return parsed.map((c: Company) => normalizeCompany(c));
   } catch {
-    return structuredClone(demoCompanies);
+    return null;
   }
+}
+
+/**
+ * Load the user's coverage list.
+ * Demo companies only seed when there is truly no saved list yet.
+ * Never overwrite an existing list just because demo data was updated.
+ */
+function loadCompanies(): Company[] {
+  const current = readList(STORAGE_KEY);
+  if (current) {
+    return current;
+  }
+
+  // Migrate oldest→newest legacy keys so a version bump doesn't resurrect deleted names.
+  for (const key of LEGACY_STORAGE_KEYS) {
+    const legacy = readList(key);
+    if (legacy) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(legacy));
+      } catch {
+        /* ignore quota */
+      }
+      return legacy;
+    }
+  }
+
+  return structuredClone(demoCompanies);
 }
 
 export function useCompanies() {
