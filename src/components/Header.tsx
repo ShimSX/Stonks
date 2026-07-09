@@ -6,16 +6,33 @@ interface Props {
   dark: boolean;
   onToggleDark: () => void;
   onAdd: () => void;
+  authConfigured: boolean;
+  userEmail: string | null;
+  cloudMode: boolean;
+  cloudReady: boolean;
+  onSignInClick: () => void;
+  onSignOut: () => void;
 }
 
-/** Board lives as Cards/Table on Research — keep nav short. */
 const tabs: { id: AppTab; label: string }[] = [
   { id: "research", label: "Research" },
   { id: "compare", label: "Compare" },
   { id: "principles", label: "Principles" },
 ];
 
-export function Header({ activeTab, onTabChange, dark, onToggleDark, onAdd }: Props) {
+export function Header({
+  activeTab,
+  onTabChange,
+  dark,
+  onToggleDark,
+  onAdd,
+  authConfigured,
+  userEmail,
+  cloudMode,
+  cloudReady,
+  onSignInClick,
+  onSignOut,
+}: Props) {
   return (
     <header className="app-header">
       <div className="logo">
@@ -36,6 +53,23 @@ export function Header({ activeTab, onTabChange, dark, onToggleDark, onAdd }: Pr
       </nav>
 
       <div className="header-actions">
+        {authConfigured && (
+          <>
+            {userEmail ? (
+              <div className="auth-pill" title={cloudMode ? "Synced to cloud" : "Signing in…"}>
+                <span className={`cloud-dot ${cloudMode && cloudReady ? "on" : ""}`} />
+                <span className="auth-email">{userEmail}</span>
+                <button type="button" className="btn ghost sm" onClick={onSignOut}>
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <button type="button" className="btn secondary sm" onClick={onSignInClick}>
+                Sign in
+              </button>
+            )}
+          </>
+        )}
         <button className="btn sm" type="button" onClick={onAdd}>
           + Add company
         </button>

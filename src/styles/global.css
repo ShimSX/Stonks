@@ -1651,3 +1651,96 @@ table.board .story-cell {
     align-self: flex-start;
   }
 }
+
+/* ─── Auth / cloud ─── */
+.auth-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 240px;
+  padding: 4px 4px 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+}
+
+.auth-email {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
+.cloud-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  flex-shrink: 0;
+}
+
+.cloud-dot.on {
+  background: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  background: var(--bg);
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.auth-tabs button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text-muted);
+}
+
+.auth-tabs button.active {
+  background: var(--bg-elevated);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-error {
+  font-size: 13px;
+  color: var(--danger);
+}
+
+.auth-info {
+  font-size: 13px;
+  color: var(--primary-dark);
+}
+
+.cloud-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 24px;
+  background: color-mix(in srgb, var(--danger) 12%, var(--bg-elevated));
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.auth-modal {
+  width: min(400px, 100%);
+}
+
+@media (max-width: 720px) {
+  .auth-pill .auth-email {
+    display: none;
+  }
+}

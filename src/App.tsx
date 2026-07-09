@@ -6,8 +6,10 @@ import { CompanyGrid } from "./components/CompanyGrid";
 import { StoryWorkspace } from "./components/StoryWorkspace";
 import { QuickAddForm } from "./components/QuickAddForm";
 import { OnboardingModal, type HubStartMode } from "./components/OnboardingModal";
+import { AuthModal } from "./components/AuthModal";
 import { CompareView } from "./components/CompareView";
 import { useCompanies } from "./hooks/useCompanies";
+import { useAuth } from "./hooks/useAuth";
 import { demoCompanies, parseImportPayload } from "./constants";
 import type { AppTab, Company } from "./types";
 import { downloadJson } from "./utils/download";
@@ -21,12 +23,18 @@ export default function App() {
   const [toast, setToast] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
 
+  const auth = useAuth();
   const {
     state,
     selectedCompany,
     visibleCompanies,
     compareCompanies,
+    cloudMode,
+    cloudReady,
+    cloudError,
+    clearCloudError,
     saveCompany,
     deleteCompany,
     resetDemo,
@@ -38,7 +46,7 @@ export default function App() {
     toggleCompareTicker,
     clearCompare,
     addStoryUpdate,
-  } = useCompanies();
+  } = useCompanies({ userId: auth.user?.id ?? null });
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
@@ -51,8 +59,13 @@ export default function App() {
     return () => window.clearTimeout(id);
   }, [toast]);
 
+  useEffect(() => {
+    if (cloudError) showToast(cloudError);
+  }, [cloudError]);
+
   // First-run: existing users with data skip the modal.
   useEffect(() => {
+    if (!cloudReady) return;
     const done = localStorage.getItem(ONBOARDING_KEY);
     if (done) return;
     if (state.companies.length > 0) {
@@ -60,7 +73,7 @@ export default function App() {
       return;
     }
     setShowOnboarding(true);
-  }, [state.companies.length]);
+  }, [state.companies.length, cloudReady]);
 
   function showToast(message: string) {
     setToast(message);
@@ -126,9 +139,27 @@ export default function App() {
           setAdding(true);
           setSelected(null);
         }}
+        authConfigured={auth.configured}
+        userEmail={auth.user?.email ?? null}
+        cloudMode={cloudMode}
+        cloudReady={cloudReady}
+        onSignInClick={() => setShowAuth(true)}
+        onSignOut={async () => {
+          await auth.signOut();
+          showToast("Signed out — back to this browser only");
+        }}
       />
 
       <PrinciplesStrip onOpenPrinciples={() => setActiveTab("principles")} />
+
+      {cloudError && (
+        <div className="cloud-banner" role="status">
+          <span>Cloud: {cloudError}</span>
+          <button type="button" className="btn ghost sm" onClick={clearCloudError}>
+            Dismiss
+          </button>
+        </div>
+      )}
 
       <div className="main-scroll">
         {activeTab === "research" && (
@@ -230,7 +261,24 @@ export default function App() {
         </>
       )}
 
-      {showOnboarding && <OnboardingModal onComplete={finishOnboarding} />}
+      {showOnboarding && cloudReady && <OnboardingModal onComplete={finishOnboarding} />}
+
+      {showAuth && (
+        <AuthModal
+          onClose={() => setShowAuth(false)}
+          error={auth.authError}
+          onSignIn={async (email, password) => {
+            await auth.signInWithPassword(email, password);
+            showToast("Signed in — hub syncing to the cloud");
+          }}
+          onSignUp={async (email, password) => {
+            await auth.signUpWithPassword(email, password);
+          }}
+          onMagicLink={async (email) => {
+            await auth.signInWithMagicLink(email);
+          }}
+        />
+      )}
 
       {toast && <div className="toast">{toast}</div>}
     </div>
