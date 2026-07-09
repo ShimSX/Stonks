@@ -5,9 +5,10 @@ import { recLabel } from "../data/stonk-framework";
 interface Props {
   companies: Company[];
   onSelect: (ticker: string) => void;
+  onDelete: (ticker: string) => void;
 }
 
-export function BoardView({ companies, onSelect }: Props) {
+export function BoardView({ companies, onSelect, onDelete }: Props) {
   return (
     <div className="page">
       <div className="page-header">
@@ -28,6 +29,7 @@ export function BoardView({ companies, onSelect }: Props) {
               <th>Size</th>
               <th>Story</th>
               <th>Updated</th>
+              <th aria-label="Actions" />
             </tr>
           </thead>
           <tbody>
@@ -42,6 +44,24 @@ export function BoardView({ companies, onSelect }: Props) {
                 <td>{c.positionSize || "—"}</td>
                 <td className="story-cell">{c.story || c.summary || "—"}</td>
                 <td>{c.updatedAt}</td>
+                <td>
+                  <button
+                    type="button"
+                    className="btn danger sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (
+                        confirm(
+                          `Delete ${c.ticker} (${c.name}) from coverage? This cannot be undone.`,
+                        )
+                      ) {
+                        onDelete(c.ticker);
+                      }
+                    }}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

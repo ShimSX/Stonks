@@ -202,28 +202,6 @@ export async function copyMarkdown(content: string) {
   await navigator.clipboard.writeText(content);
 }
 
-export function stonkProgress(company: Company): { filled: number; total: number; pct: number } {
-  const checks = [
-    company.story,
-    company.superiorCompany,
-    company.moat,
-    company.tenXPath,
-    company.product,
-    company.feedback,
-    company.market,
-    company.peopleVector,
-    company.bsChecklist.some(Boolean),
-    company.pros.some(Boolean),
-    company.cons.some(Boolean),
-    company.financials,
-    company.recommendation,
-    company.verdict,
-  ];
-  const filled = checks.filter(Boolean).length;
-  const total = checks.length;
-  return { filled, total, pct: Math.round((filled / total) * 100) };
-}
-
 export function recLabel(value: Recommendation): string {
   return labelFor(recommendationOptions, value);
 }

@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { demoCompanies, STORAGE_KEY } from "../constants";
-import type { AppState, Company, LynchType, Recommendation, ViewMode } from "../types";
+import type { AppState, Company, LynchType, Recommendation } from "../types";
 
 function loadCompanies(): Company[] {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
     if (Array.isArray(saved) && saved.length) {
-      // Migrate older records missing new fields
       return saved.map((c: Company) => ({
         ...c,
         storyUpdates: c.storyUpdates ?? [],
@@ -24,9 +23,7 @@ export function useCompanies() {
     companies: loadCompanies(),
     selected: null,
     search: "",
-    view: "research",
     compareTickers: [],
-    openChart: null,
     lynchFilter: "all",
     recFilter: "all",
   }));
@@ -88,19 +85,16 @@ export function useCompanies() {
         companies,
         selected: current.selected === ticker ? null : current.selected,
         compareTickers: current.compareTickers.filter((item) => item !== ticker),
-        openChart: current.openChart === ticker ? null : current.openChart,
       };
     });
   }, []);
 
   const resetDemo = useCallback(() => {
-    const companies = structuredClone(demoCompanies);
     setState((current) => ({
       ...current,
-      companies,
+      companies: structuredClone(demoCompanies),
       selected: null,
       compareTickers: [],
-      openChart: null,
     }));
   }, []);
 
@@ -110,7 +104,6 @@ export function useCompanies() {
       companies,
       selected: null,
       compareTickers: [],
-      openChart: null,
     }));
   }, []);
 
@@ -120,10 +113,6 @@ export function useCompanies() {
 
   const setSelected = useCallback((ticker: string | null) => {
     setState((current) => ({ ...current, selected: ticker }));
-  }, []);
-
-  const setView = useCallback((view: ViewMode) => {
-    setState((current) => ({ ...current, view }));
   }, []);
 
   const setLynchFilter = useCallback((lynchFilter: LynchType | "all") => {
@@ -147,11 +136,7 @@ export function useCompanies() {
   }, []);
 
   const clearCompare = useCallback(() => {
-    setState((current) => ({ ...current, compareTickers: [], view: "research" }));
-  }, []);
-
-  const setOpenChart = useCallback((ticker: string | null) => {
-    setState((current) => ({ ...current, openChart: ticker }));
+    setState((current) => ({ ...current, compareTickers: [] }));
   }, []);
 
   const addStoryUpdate = useCallback((ticker: string, note: string) => {
@@ -189,12 +174,10 @@ export function useCompanies() {
     replaceCompanies,
     setSearch,
     setSelected,
-    setView,
     setLynchFilter,
     setRecFilter,
     toggleCompareTicker,
     clearCompare,
-    setOpenChart,
     addStoryUpdate,
   };
 }

@@ -6,6 +6,7 @@ import { CompanyLogo } from "./CompanyLogo";
 interface Props {
   company: Company;
   onClick: () => void;
+  onDelete?: (ticker: string) => void;
   isSelected?: boolean;
 }
 
@@ -16,7 +17,7 @@ function recPillClass(rec: Company["recommendation"]): string {
   return "pill";
 }
 
-export function CoverageCard({ company, onClick, isSelected }: Props) {
+export function CoverageCard({ company, onClick, onDelete, isSelected }: Props) {
   const blurb = company.story || company.summary || "No two-minute story yet — open and write one.";
 
   return (
@@ -32,6 +33,26 @@ export function CoverageCard({ company, onClick, isSelected }: Props) {
       role="button"
       tabIndex={0}
     >
+      {onDelete && (
+        <button
+          type="button"
+          className="card-delete-btn"
+          aria-label={`Delete ${company.ticker}`}
+          title={`Delete ${company.ticker}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (
+              confirm(
+                `Delete ${company.ticker} (${company.name}) from coverage? This cannot be undone.`,
+              )
+            ) {
+              onDelete(company.ticker);
+            }
+          }}
+        >
+          ✕
+        </button>
+      )}
       <div className="coverage-logo">
         <CompanyLogo company={company} />
       </div>

@@ -43,6 +43,14 @@ export function CompanyDetail({
     onToast("Markdown downloaded");
   }
 
+  function handleDelete() {
+    if (confirm(`Delete ${company.ticker} (${company.name}) from coverage? This cannot be undone.`)) {
+      onDelete(company.ticker);
+      onClose();
+      onToast(`${company.ticker} deleted`);
+    }
+  }
+
   return (
     <>
       <div className="drawer-backdrop" onClick={onClose} />
@@ -113,6 +121,7 @@ export function CompanyDetail({
               onDelete={(ticker) => {
                 onDelete(ticker);
                 onClose();
+                onToast(`${ticker} deleted`);
               }}
               onCancel={() => setTab("story")}
             />
@@ -128,6 +137,9 @@ export function CompanyDetail({
           </button>
           <button className="btn secondary sm" type="button" onClick={() => setTab("edit")}>
             Edit sheet
+          </button>
+          <button className="btn danger sm" type="button" onClick={handleDelete}>
+            Delete
           </button>
         </div>
       </aside>

@@ -80,7 +80,6 @@ export function CompanyForm({ company, onSave, onDelete, onCancel }: CompanyForm
       storyUpdates: form.storyUpdates ?? [],
       domain: form.domain.trim(),
       updatedAt: new Date().toISOString().slice(0, 10),
-      series: form.series.length ? form.series : emptyCompany().series,
     });
   }
 

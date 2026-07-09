@@ -13,6 +13,7 @@ interface Props {
   recFilter: Recommendation | "all";
   onRecFilter: (value: Recommendation | "all") => void;
   onSelect: (ticker: string) => void;
+  onDelete: (ticker: string) => void;
   selected: string | null;
   onExportAll: () => void;
   onImport: (file: File) => void;
@@ -29,6 +30,7 @@ export function CompanyGrid({
   recFilter,
   onRecFilter,
   onSelect,
+  onDelete,
   selected,
   onExportAll,
   onImport,
@@ -113,6 +115,7 @@ export function CompanyGrid({
               key={company.ticker}
               company={company}
               onClick={() => onSelect(company.ticker)}
+              onDelete={onDelete}
               isSelected={selected === company.ticker}
             />
           ))}

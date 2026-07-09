@@ -10,7 +10,7 @@ import { CompareView } from "./components/CompareView";
 import { useCompanies } from "./hooks/useCompanies";
 import { emptyCompany, parseImportPayload } from "./constants";
 import type { AppTab, Company } from "./types";
-import { downloadJson } from "./utils/charts";
+import { downloadJson } from "./utils/download";
 import "./styles/global.css";
 
 export default function App() {
@@ -106,6 +106,11 @@ export default function App() {
             recFilter={state.recFilter}
             onRecFilter={setRecFilter}
             onSelect={setSelected}
+            onDelete={(ticker) => {
+              deleteCompany(ticker);
+              if (state.selected === ticker) setSelected(null);
+              showToast(`${ticker} deleted`);
+            }}
             selected={state.selected}
             onExportAll={() => {
               downloadJson("ss-research-coverage.json", state.companies);
@@ -126,6 +131,11 @@ export default function App() {
             companies={visibleCompanies}
             onSelect={(ticker) => {
               setSelected(ticker);
+            }}
+            onDelete={(ticker) => {
+              deleteCompany(ticker);
+              if (state.selected === ticker) setSelected(null);
+              showToast(`${ticker} deleted`);
             }}
           />
         )}
