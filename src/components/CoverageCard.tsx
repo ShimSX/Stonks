@@ -64,7 +64,9 @@ export function CoverageCard({ company, onClick, onDelete, isSelected }: Props) 
         <h3>{company.name}</h3>
         <p className="coverage-desc">{blurb}</p>
         <div className="coverage-pills">
-          <span className="pill green">{lynchLabel(company.lynchType)}</span>
+          <span className="pill green" title="Company type (Lynch)">
+            {lynchLabel(company.lynchType)}
+          </span>
           {company.recommendation && (
             <span className={recPillClass(company.recommendation)}>
               {recLabel(company.recommendation)}

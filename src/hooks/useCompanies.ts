@@ -47,7 +47,9 @@ function loadCompanies(): Company[] {
     }
   }
 
-  return structuredClone(demoCompanies);
+  // Brand-new visitor: start empty so first-run onboarding can choose sample vs empty.
+  // Demo template is applied only when they pick "Start with sample coverage" (or Reset).
+  return [];
 }
 
 export function useCompanies() {

@@ -8,9 +8,9 @@ interface Props {
   onAdd: () => void;
 }
 
+/** Board lives as Cards/Table on Research — keep nav short. */
 const tabs: { id: AppTab; label: string }[] = [
   { id: "research", label: "Research" },
-  { id: "board", label: "Board" },
   { id: "compare", label: "Compare" },
   { id: "principles", label: "Principles" },
 ];

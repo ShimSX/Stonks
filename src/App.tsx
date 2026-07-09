@@ -3,21 +3,24 @@ import { Header } from "./components/Header";
 import { PrinciplesStrip } from "./components/PrinciplesStrip";
 import { PrinciplesPanel } from "./components/PrinciplesPanel";
 import { CompanyGrid } from "./components/CompanyGrid";
-import { CompanyDetail } from "./components/CompanyDetail";
-import { CompanyForm } from "./components/CompanyForm";
-import { BoardView } from "./components/BoardView";
+import { StoryWorkspace } from "./components/StoryWorkspace";
+import { QuickAddForm } from "./components/QuickAddForm";
+import { OnboardingModal, type HubStartMode } from "./components/OnboardingModal";
 import { CompareView } from "./components/CompareView";
 import { useCompanies } from "./hooks/useCompanies";
-import { emptyCompany, parseImportPayload } from "./constants";
+import { demoCompanies, parseImportPayload } from "./constants";
 import type { AppTab, Company } from "./types";
 import { downloadJson } from "./utils/download";
 import "./styles/global.css";
+
+const ONBOARDING_KEY = "ss-research-onboarding-v1";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<AppTab>("research");
   const [dark, setDark] = useState(() => localStorage.getItem("dvb-theme") === "dark");
   const [toast, setToast] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const {
     state,
@@ -48,13 +51,35 @@ export default function App() {
     return () => window.clearTimeout(id);
   }, [toast]);
 
+  // First-run: existing users with data skip the modal.
+  useEffect(() => {
+    const done = localStorage.getItem(ONBOARDING_KEY);
+    if (done) return;
+    if (state.companies.length > 0) {
+      localStorage.setItem(ONBOARDING_KEY, "1");
+      return;
+    }
+    setShowOnboarding(true);
+  }, [state.companies.length]);
+
   function showToast(message: string) {
     setToast(message);
   }
 
+  function finishOnboarding(mode: HubStartMode) {
+    localStorage.setItem(ONBOARDING_KEY, "1");
+    setShowOnboarding(false);
+    if (mode === "sample") {
+      replaceCompanies(structuredClone(demoCompanies));
+      showToast("Sample coverage loaded — open any card to read the story");
+    } else {
+      replaceCompanies([]);
+      showToast("Hub ready — add a company you actually follow");
+    }
+  }
+
   function handleTabChange(tab: AppTab) {
     setActiveTab(tab);
-    // Keep detail drawer off when leaving research/board (compare has its own flow)
     if (tab === "compare" || tab === "principles") {
       setSelected(null);
     }
@@ -77,6 +102,17 @@ export default function App() {
       }
     };
     reader.readAsText(file);
+  }
+
+  function mergeSample() {
+    const existing = new Set(state.companies.map((c) => c.ticker));
+    const toAdd = demoCompanies.filter((c) => !existing.has(c.ticker));
+    if (!toAdd.length) {
+      showToast("All sample tickers already in your hub");
+      return;
+    }
+    replaceCompanies([...state.companies, ...structuredClone(toAdd)]);
+    showToast(`Added ${toAdd.length} sample companies`);
   }
 
   return (
@@ -111,6 +147,10 @@ export default function App() {
               if (state.selected === ticker) setSelected(null);
               showToast(`${ticker} deleted`);
             }}
+            onAdd={() => {
+              setAdding(true);
+              setSelected(null);
+            }}
             selected={state.selected}
             onExportAll={() => {
               downloadJson("ss-research-coverage.json", state.companies);
@@ -118,25 +158,16 @@ export default function App() {
             }}
             onImport={handleImport}
             onReset={() => {
-              if (confirm("Reset to demo coverage? Local edits will be replaced.")) {
+              if (
+                confirm(
+                  "Replace your entire hub with sample coverage? Your current list will be overwritten.",
+                )
+              ) {
                 resetDemo();
-                showToast("Demo coverage restored");
+                showToast("Sample coverage restored");
               }
             }}
-          />
-        )}
-
-        {activeTab === "board" && (
-          <BoardView
-            companies={visibleCompanies}
-            onSelect={(ticker) => {
-              setSelected(ticker);
-            }}
-            onDelete={(ticker) => {
-              deleteCompany(ticker);
-              if (state.selected === ticker) setSelected(null);
-              showToast(`${ticker} deleted`);
-            }}
+            onLoadSample={mergeSample}
           />
         )}
 
@@ -157,7 +188,7 @@ export default function App() {
       </div>
 
       {selectedCompany && !adding && (
-        <CompanyDetail
+        <StoryWorkspace
           company={selectedCompany}
           onClose={() => setSelected(null)}
           onSave={saveCompany}
@@ -177,21 +208,20 @@ export default function App() {
             <div className="drawer-header">
               <div>
                 <h2>Add company</h2>
-                <div className="sub">Start with the two-minute story.</div>
+                <div className="sub">Ticker, name, two-minute story. Depth later.</div>
               </div>
               <button className="icon-btn" type="button" onClick={() => setAdding(false)}>
                 ✕
               </button>
             </div>
             <div className="drawer-body">
-              <CompanyForm
-                company={emptyCompany()}
+              <QuickAddForm
                 onSave={(c: Company) => {
                   saveCompany(c);
                   setAdding(false);
                   setSelected(c.ticker);
                   setActiveTab("research");
-                  showToast(`${c.ticker} added to coverage`);
+                  showToast(`${c.ticker} added — keep the story honest`);
                 }}
                 onCancel={() => setAdding(false)}
               />
@@ -199,6 +229,8 @@ export default function App() {
           </aside>
         </>
       )}
+
+      {showOnboarding && <OnboardingModal onComplete={finishOnboarding} />}
 
       {toast && <div className="toast">{toast}</div>}
     </div>

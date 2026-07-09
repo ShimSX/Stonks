@@ -3,11 +3,10 @@ import { stonkPrinciples, bsChecklistPrompts, superiorCriteriaPrompts } from "..
 export function PrinciplesPanel() {
   return (
     <div className="page principles-page">
-      <h1>Investing Principles</h1>
+      <h1>Principles</h1>
       <p className="principles-intro">
-        From your Stonk.MD framework — Peter Lynch discipline plus the rules you actually want to
-        follow. These reminders stay on screen so you don&apos;t abandon the process when a chart
-        moves.
+        Short rules so you don&apos;t abandon the process when a chart moves. The product is the
+        two-minute story — update it when the business changes.
       </p>
 
       <div className="principles-grid">

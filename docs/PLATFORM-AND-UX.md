@@ -322,6 +322,26 @@ It’s not a terminal, not a Twitter feed, not a signal service. It’s the plac
 5. Hide power tools behind Settings.  
 6. Optional: live quotes, share link, LLM “draft story from ticker.”
 
+### Prototype status (frontend-only)
+
+Implemented in the app for local testing (no Supabase yet):
+
+- First-run onboarding (3 steps + start empty / sample)
+- New hubs start empty until you choose
+- Quick add: ticker + name + story only
+- Progressive company workspace (story → lenses → full sheet)
+- Research: Cards | Table toggle, Filters, ⋯ menu (import/export/sample)
+- Teaching empty state + getting-started checklist
+- Nav: Research · Compare · Principles only
+
+**Reset onboarding to retest:** in the browser console:
+
+```js
+localStorage.removeItem('ss-research-onboarding-v1');
+localStorage.removeItem('ss-research-coverage');
+location.reload();
+```
+
 ---
 
 ## Quick reference
