@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { Company } from "../types";
 import { lynchLabel } from "../constants";
-import { moatLabel, recLabel } from "../data/stonk-framework";
+import { moatLabel } from "../data/stonk-framework";
 
 const MAX_COMPARE = 4;
 
@@ -130,10 +130,9 @@ export function CompareView({
                 </button>
               </div>
               <div className="meta" style={{ marginBottom: 10 }}>
-                <span className="pill green">{lynchLabel(company.lynchType)}</span>
-                {company.recommendation && (
-                  <span className="pill amber">{recLabel(company.recommendation)}</span>
-                )}
+                <span className="pill green" title="Lynch type">
+                  {lynchLabel(company.lynchType)}
+                </span>
                 {company.moat && <span className="pill">Moat: {moatLabel(company.moat)}</span>}
                 <span className="pill">{company.marketCap || "Cap?"}</span>
               </div>

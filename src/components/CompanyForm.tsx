@@ -5,7 +5,6 @@ import {
   capSizeOptions,
   moatOptions,
   positionSizeOptions,
-  recommendationOptions,
   superiorCriteriaPrompts,
   tenXOptions,
   triStateOptions,
@@ -357,44 +356,27 @@ export function CompanyForm({ company, onSave, onDelete, onCancel }: CompanyForm
         </div>
       </Fieldset>
 
-      <Fieldset title="Verdict & action" open={openSections.verdict} onToggle={() => toggleSection("verdict")}>
-        <div className="split">
-          <div className="field">
-            <label htmlFor="recommendation">Recommendation</label>
-            <select
-              id="recommendation"
-              value={form.recommendation}
-              onChange={(e) =>
-                updateField("recommendation", e.target.value as Company["recommendation"])
-              }
-            >
-              {recommendationOptions.map((item) => (
-                <option key={item.value || "blank"} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="field">
-            <label htmlFor="positionSize">Position size</label>
-            <select
-              id="positionSize"
-              value={form.positionSize}
-              onChange={(e) =>
-                updateField("positionSize", e.target.value as Company["positionSize"])
-              }
-            >
-              {positionSizeOptions.map((item) => (
-                <option key={item.value || "blank"} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
-          </div>
+      <Fieldset title="Story monitor" open={openSections.verdict} onToggle={() => toggleSection("verdict")}>
+        <div className="field">
+          <label htmlFor="positionSize">Position size (optional)</label>
+          <select
+            id="positionSize"
+            value={form.positionSize}
+            onChange={(e) =>
+              updateField("positionSize", e.target.value as Company["positionSize"])
+            }
+          >
+            {positionSizeOptions.map((item) => (
+              <option key={item.value || "blank"} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+          <p className="help">How big a slice of your portfolio — not a buy/sell call.</p>
         </div>
 
         <div className="field">
-          <label htmlFor="catalysts">Catalysts & story monitor</label>
+          <label htmlFor="catalysts">What to watch next</label>
           <textarea
             id="catalysts"
             placeholder="What to track quarterly"

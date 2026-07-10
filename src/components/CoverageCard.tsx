@@ -1,5 +1,5 @@
 import type { Company } from "../types";
-import { recLabel } from "../data/stonk-framework";
+import { lynchLabel } from "../constants";
 
 interface Props {
   company: Company;
@@ -8,16 +8,13 @@ interface Props {
   isSelected?: boolean;
 }
 
-function recClass(rec: Company["recommendation"]): string {
-  if (rec === "strong-buy" || rec === "buy") return "pill green";
-  if (rec === "avoid") return "pill red";
-  if (rec === "watch") return "pill amber";
-  return "pill";
-}
-
 export function CoverageCard({ company, onClick, onDelete, isSelected }: Props) {
   const latest = company.storyUpdates?.[0];
   const story = company.story || "Tap to write the story…";
+  const typeLabel =
+    company.lynchType && company.lynchType !== "unknown"
+      ? lynchLabel(company.lynchType)
+      : "Type?";
 
   return (
     <article
@@ -48,13 +45,12 @@ export function CoverageCard({ company, onClick, onDelete, isSelected }: Props) 
 
       <div className="story-card-top">
         <span className="ticker-tag">{company.ticker}</span>
-        {company.recommendation ? (
-          <span className={recClass(company.recommendation)}>
-            {recLabel(company.recommendation)}
-          </span>
-        ) : (
-          <span className="pill">No call</span>
-        )}
+        <span
+          className={`pill ${company.lynchType !== "unknown" ? "green" : ""}`}
+          title="Peter Lynch company type"
+        >
+          {typeLabel}
+        </span>
       </div>
 
       <h3 className="story-card-name">{company.name}</h3>

@@ -1,6 +1,5 @@
 import type { Company } from "../types";
 import { lynchLabel } from "../constants";
-import { recLabel } from "../data/stonk-framework";
 
 interface Props {
   companies: Company[];
@@ -16,9 +15,7 @@ export function BoardView({ companies, onSelect, onDelete }: Props) {
           <tr>
             <th>Ticker</th>
             <th>Company</th>
-            <th>Type</th>
-            <th>Call</th>
-            <th>Size</th>
+            <th>Lynch type</th>
             <th>Story</th>
             <th>Updated</th>
             <th aria-label="Actions" />
@@ -32,8 +29,6 @@ export function BoardView({ companies, onSelect, onDelete }: Props) {
               </td>
               <td>{c.name}</td>
               <td title="Peter Lynch company type">{lynchLabel(c.lynchType)}</td>
-              <td>{c.recommendation ? recLabel(c.recommendation) : "—"}</td>
-              <td>{c.positionSize || "—"}</td>
               <td className="story-cell">{c.story || c.summary || "—"}</td>
               <td>{c.updatedAt}</td>
               <td>
@@ -42,13 +37,7 @@ export function BoardView({ companies, onSelect, onDelete }: Props) {
                   className="btn danger sm"
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (
-                      confirm(
-                        `Delete ${c.ticker} (${c.name}) from coverage? This cannot be undone.`,
-                      )
-                    ) {
-                      onDelete(c.ticker);
-                    }
+                    if (confirm(`Delete ${c.ticker}?`)) onDelete(c.ticker);
                   }}
                 >
                   Delete

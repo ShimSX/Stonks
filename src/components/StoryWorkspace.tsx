@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import type { Company, Recommendation } from "../types";
+import type { Company, LynchType } from "../types";
 import { CompanyForm } from "./CompanyForm";
-import { recLabel } from "../data/stonk-framework";
+import { lynchLabel, lynchTypes } from "../constants";
 import { CompanyLogo } from "./CompanyLogo";
 
 interface Props {
@@ -13,21 +13,17 @@ interface Props {
   onToast: (message: string) => void;
 }
 
-const REC_OPTIONS: { value: Recommendation; label: string }[] = [
-  { value: "watch", label: "Watch" },
-  { value: "buy", label: "Buy" },
-  { value: "avoid", label: "Avoid" },
-];
-
 const STORY_PLACEHOLDER =
   "What do they do? Why care? What has to go right? Main risk?";
 
+/** Lynch types only — no buy/sell "calls". You watch the story every day. */
+const TYPE_OPTIONS = lynchTypes.filter((t) => t.value !== "unknown");
+
 /**
  * Ultra-simple company view:
- * 1) Story feed (updates first — follow the narrative)
- * 2) Core story (one box)
- * 3) One-tap call
- * Everything else lives under "More detail"
+ * 1) Story feed (updates first)
+ * 2) Core story
+ * 3) Lynch company type (grower / cyclical / etc.)
  */
 export function StoryWorkspace({
   company,
@@ -39,15 +35,15 @@ export function StoryWorkspace({
 }: Props) {
   const [more, setMore] = useState(false);
   const [story, setStory] = useState(company.story);
-  const [recommendation, setRecommendation] = useState(company.recommendation);
+  const [lynchType, setLynchType] = useState(company.lynchType);
   const [note, setNote] = useState("");
 
   useEffect(() => {
     setStory(company.story);
-    setRecommendation(company.recommendation);
+    setLynchType(company.lynchType);
     setMore(false);
     setNote("");
-  }, [company.ticker, company.story, company.recommendation]);
+  }, [company.ticker, company.story, company.lynchType]);
 
   function persist(partial: Partial<Company>) {
     onSave({
@@ -55,7 +51,7 @@ export function StoryWorkspace({
       ...partial,
       story: (partial.story ?? story).trim(),
       summary: company.summary || (partial.story ?? story).trim().slice(0, 160),
-      recommendation: partial.recommendation ?? recommendation,
+      lynchType: partial.lynchType ?? lynchType,
       updatedAt: new Date().toISOString().slice(0, 10),
     });
   }
@@ -68,10 +64,10 @@ export function StoryWorkspace({
     }
   }
 
-  function handleRec(value: Recommendation) {
-    setRecommendation(value);
-    persist({ recommendation: value, story: story.trim() });
-    onToast(`Call: ${recLabel(value)}`);
+  function handleType(value: LynchType) {
+    setLynchType(value);
+    persist({ lynchType: value, story: story.trim() });
+    onToast(`Type: ${lynchLabel(value)}`);
   }
 
   function handleLog(e: React.FormEvent) {
@@ -109,12 +105,12 @@ export function StoryWorkspace({
           </div>
           <div className="drawer-body">
             <CompanyForm
-              company={{ ...company, story, recommendation }}
+              company={{ ...company, story, lynchType }}
               onSave={(c) => {
                 onSave(c);
                 setMore(false);
                 setStory(c.story);
-                setRecommendation(c.recommendation);
+                setLynchType(c.lynchType);
                 onToast("Saved");
               }}
               onDelete={(ticker) => {
@@ -152,11 +148,10 @@ export function StoryWorkspace({
         </div>
 
         <div className="drawer-body simple-body">
-          {/* 1. Story feed — follow changes first */}
           <section className="feed-block">
             <div className="feed-head">
               <span className="level-label">Story feed</span>
-              <span className="feed-hint">What changed over time</span>
+              <span className="feed-hint">What changed — keep watching</span>
             </div>
 
             <form className="feed-compose" onSubmit={handleLog}>
@@ -173,7 +168,7 @@ export function StoryWorkspace({
 
             {updates.length === 0 ? (
               <p className="feed-empty">
-                No updates yet. When something moves the thesis, post it here so the story stays honest.
+                No updates yet. You watch this name — when the story moves, log it here.
               </p>
             ) : (
               <ul className="feed-list">
@@ -187,7 +182,6 @@ export function StoryWorkspace({
             )}
           </section>
 
-          {/* 2. Core thesis — one box */}
           <section className="thesis-block">
             <div className="level-label">The story (edit anytime)</div>
             <textarea
@@ -201,16 +195,19 @@ export function StoryWorkspace({
             <p className="autosave-hint">Saves when you click away</p>
           </section>
 
-          {/* 3. Call — three taps */}
           <section className="call-block">
-            <div className="level-label">Your call</div>
-            <div className="rec-row rec-row-simple">
-              {REC_OPTIONS.map((opt) => (
+            <div className="level-label">Lynch type</div>
+            <p className="type-hint">
+              How the business behaves — not a buy/sell call. You follow the story either way.
+            </p>
+            <div className="type-grid">
+              {TYPE_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
                   type="button"
-                  className={`rec-chip big ${recommendation === opt.value ? "active" : ""} ${opt.value === "avoid" ? "danger" : ""}`}
-                  onClick={() => handleRec(opt.value)}
+                  className={`type-chip ${lynchType === opt.value ? "active" : ""}`}
+                  onClick={() => handleType(opt.value)}
+                  title={typeTooltip(opt.value)}
                 >
                   {opt.label}
                 </button>
@@ -230,4 +227,23 @@ export function StoryWorkspace({
       </aside>
     </>
   );
+}
+
+function typeTooltip(type: LynchType): string {
+  switch (type) {
+    case "fast-grower":
+      return "High growth, often smaller — earnings can ramp hard; story must stay intact";
+    case "stalwart":
+      return "Big, solid, steady compounder — not a 10X lottery ticket";
+    case "slow-grower":
+      return "Mature, slow growth — often about dividends and capital returns";
+    case "cyclical":
+      return "Rides economic or industry cycles — buy when hated, sell when loved (Lynch)";
+    case "turnaround":
+      return "Broken story trying to fix itself — binary outcomes";
+    case "asset-play":
+      return "Hidden assets, land, cash, IP worth more than the market prices";
+    default:
+      return "";
+  }
 }
