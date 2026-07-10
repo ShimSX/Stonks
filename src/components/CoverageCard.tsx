@@ -1,7 +1,5 @@
 import type { Company } from "../types";
-import { lynchLabel } from "../constants";
 import { recLabel } from "../data/stonk-framework";
-import { CompanyLogo } from "./CompanyLogo";
 
 interface Props {
   company: Company;
@@ -10,7 +8,7 @@ interface Props {
   isSelected?: boolean;
 }
 
-function recPillClass(rec: Company["recommendation"]): string {
+function recClass(rec: Company["recommendation"]): string {
   if (rec === "strong-buy" || rec === "buy") return "pill green";
   if (rec === "avoid") return "pill red";
   if (rec === "watch") return "pill amber";
@@ -18,11 +16,12 @@ function recPillClass(rec: Company["recommendation"]): string {
 }
 
 export function CoverageCard({ company, onClick, onDelete, isSelected }: Props) {
-  const blurb = company.story || company.summary || "No two-minute story yet — open and write one.";
+  const latest = company.storyUpdates?.[0];
+  const story = company.story || "Tap to write the story…";
 
   return (
     <article
-      className={`coverage-card ${isSelected ? "selected" : ""}`}
+      className={`coverage-card story-card ${isSelected ? "selected" : ""}`}
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -38,42 +37,43 @@ export function CoverageCard({ company, onClick, onDelete, isSelected }: Props) 
           type="button"
           className="card-delete-btn"
           aria-label={`Delete ${company.ticker}`}
-          title={`Delete ${company.ticker}`}
           onClick={(e) => {
             e.stopPropagation();
-            if (
-              confirm(
-                `Delete ${company.ticker} (${company.name}) from coverage? This cannot be undone.`,
-              )
-            ) {
-              onDelete(company.ticker);
-            }
+            if (confirm(`Delete ${company.ticker}?`)) onDelete(company.ticker);
           }}
         >
           ✕
         </button>
       )}
-      <div className="coverage-logo">
-        <CompanyLogo company={company} />
-      </div>
-      <div className="coverage-body">
-        <div className="coverage-meta">
-          <span className="ticker-tag">{company.ticker}</span>
-          <span className="date-muted">{company.updatedAt}</span>
-        </div>
-        <h3>{company.name}</h3>
-        <p className="coverage-desc">{blurb}</p>
-        <div className="coverage-pills">
-          <span className="pill green" title="Company type (Lynch)">
-            {lynchLabel(company.lynchType)}
+
+      <div className="story-card-top">
+        <span className="ticker-tag">{company.ticker}</span>
+        {company.recommendation ? (
+          <span className={recClass(company.recommendation)}>
+            {recLabel(company.recommendation)}
           </span>
-          {company.recommendation && (
-            <span className={recPillClass(company.recommendation)}>
-              {recLabel(company.recommendation)}
-            </span>
-          )}
-          {company.moat && <span className="pill">Moat: {company.moat}</span>}
+        ) : (
+          <span className="pill">No call</span>
+        )}
+      </div>
+
+      <h3 className="story-card-name">{company.name}</h3>
+
+      {latest && (
+        <div className="story-card-latest">
+          <span className="latest-dot" aria-hidden />
+          <div>
+            <time dateTime={latest.date}>{latest.date}</time>
+            <p>{latest.note}</p>
+          </div>
         </div>
+      )}
+
+      <p className="story-card-body">{story}</p>
+
+      <div className="story-card-foot">
+        <span>Open story →</span>
+        <span className="date-muted">{company.updatedAt}</span>
       </div>
     </article>
   );

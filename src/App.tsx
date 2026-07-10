@@ -239,7 +239,7 @@ export default function App() {
             <div className="drawer-header">
               <div>
                 <h2>Add company</h2>
-                <div className="sub">Ticker, name, two-minute story. Depth later.</div>
+                <div className="sub">Ticker + story. That&apos;s it.</div>
               </div>
               <button className="icon-btn" type="button" onClick={() => setAdding(false)}>
                 ✕

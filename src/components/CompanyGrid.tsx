@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { CoverageCard } from "./CoverageCard";
-import { BoardView } from "./BoardView";
 import type { Company, LynchType, Recommendation } from "../types";
-import { lynchTypes } from "../constants";
-import { recommendationOptions } from "../data/stonk-framework";
-
-type ViewMode = "cards" | "table";
 
 interface Props {
   companies: Company[];
@@ -31,10 +26,6 @@ export function CompanyGrid({
   totalCount,
   search,
   onSearch,
-  lynchFilter,
-  onLynchFilter,
-  recFilter,
-  onRecFilter,
   onSelect,
   onDelete,
   onAdd,
@@ -44,65 +35,42 @@ export function CompanyGrid({
   onReset,
   onLoadSample,
 }: Props) {
-  const [view, setView] = useState<ViewMode>("cards");
-  const [showFilters, setShowFilters] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
   const trulyEmpty = totalCount === 0;
   const filterEmpty = !trulyEmpty && companies.length === 0;
 
   return (
-    <div className="page">
-      <div className="page-header">
+    <div className="page page-simple">
+      <div className="page-header simple-header">
         <div className="page-title">
-          <h1>Your stories</h1>
+          <h1>Coverage</h1>
           <p>
             {trulyEmpty
-              ? "Add a company you actually follow. Start with the story, not the price."
-              : companies.length === totalCount
-                ? `${totalCount} under coverage`
-                : `${companies.length} of ${totalCount} shown`}
+              ? "Track the story. Update when it changes."
+              : `${totalCount} ${totalCount === 1 ? "company" : "companies"}`}
           </p>
         </div>
-        <div className="view-toggle" role="group" aria-label="View mode">
-          <button
-            type="button"
-            className={`view-toggle-btn ${view === "cards" ? "active" : ""}`}
-            onClick={() => setView("cards")}
-          >
-            Cards
+        {!trulyEmpty && (
+          <button className="btn sm" type="button" onClick={onAdd}>
+            + Add
           </button>
-          <button
-            type="button"
-            className={`view-toggle-btn ${view === "table" ? "active" : ""}`}
-            onClick={() => setView("table")}
-          >
-            Table
-          </button>
-        </div>
+        )}
       </div>
 
       {!trulyEmpty && (
-        <div className="toolbar">
+        <div className="toolbar toolbar-simple">
           <input
             type="search"
             className="search-input"
-            placeholder="Search stories…"
+            placeholder="Search…"
             value={search}
             onChange={(e) => onSearch(e.target.value)}
           />
-          <button
-            type="button"
-            className={`btn secondary sm ${showFilters ? "active" : ""}`}
-            onClick={() => setShowFilters((v) => !v)}
-          >
-            Filters
-          </button>
           <div className="toolbar-menu-wrap">
             <button
               type="button"
               className="btn secondary sm"
-              aria-expanded={menuOpen}
+              aria-label="More"
               onClick={() => setMenuOpen((v) => !v)}
             >
               ⋯
@@ -118,10 +86,10 @@ export function CompanyGrid({
                       setMenuOpen(false);
                     }}
                   >
-                    Export JSON
+                    Export
                   </button>
                   <label>
-                    Import JSON
+                    Import
                     <input
                       type="file"
                       accept="application/json,.json"
@@ -141,7 +109,7 @@ export function CompanyGrid({
                       setMenuOpen(false);
                     }}
                   >
-                    Add sample companies
+                    Load sample names
                   </button>
                   <button
                     type="button"
@@ -151,7 +119,7 @@ export function CompanyGrid({
                       setMenuOpen(false);
                     }}
                   >
-                    Replace all with sample
+                    Replace with sample
                   </button>
                 </div>
               </>
@@ -160,61 +128,23 @@ export function CompanyGrid({
         </div>
       )}
 
-      {showFilters && !trulyEmpty && (
-        <div className="filter-row">
-          <select
-            className="select-input"
-            value={lynchFilter}
-            onChange={(e) => onLynchFilter(e.target.value as LynchType | "all")}
-            aria-label="Filter by company type"
-          >
-            <option value="all">All company types</option>
-            {lynchTypes.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-          <select
-            className="select-input"
-            value={recFilter}
-            onChange={(e) => onRecFilter(e.target.value as Recommendation | "all")}
-            aria-label="Filter by recommendation"
-          >
-            <option value="all">All calls</option>
-            {recommendationOptions
-              .filter((o) => o.value)
-              .map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-          </select>
-        </div>
-      )}
-
       {trulyEmpty ? (
         <div className="empty empty-rich">
-          <h2>Add the first company you follow</h2>
-          <p>
-            Write a two-minute story: what they do, why it might 10X, what must happen, main risk.
-            You can fill the deeper research sheet later.
-          </p>
+          <h2>Start with one company</h2>
+          <p>Write what they do and why you care. Post updates when the story moves.</p>
           <div className="button-row" style={{ justifyContent: "center", marginTop: 16 }}>
             <button className="btn" type="button" onClick={onAdd}>
               + Add company
             </button>
             <button className="btn secondary" type="button" onClick={onLoadSample}>
-              Browse sample coverage
+              Try sample list
             </button>
           </div>
         </div>
       ) : filterEmpty ? (
-        <div className="empty">No companies match. Clear filters or search.</div>
-      ) : view === "table" ? (
-        <BoardView companies={companies} onSelect={onSelect} onDelete={onDelete} />
+        <div className="empty">Nothing matches that search.</div>
       ) : (
-        <div className="company-grid">
+        <div className="company-grid story-grid">
           {companies.map((company) => (
             <CoverageCard
               key={company.ticker}
@@ -226,37 +156,6 @@ export function CompanyGrid({
           ))}
         </div>
       )}
-
-      {!trulyEmpty && totalCount > 0 && totalCount <= 3 && (
-        <HubChecklist companies={companies} />
-      )}
-    </div>
-  );
-}
-
-function HubChecklist({ companies }: { companies: Company[] }) {
-  const items = [
-    { done: companies.length > 0, label: "Added a company" },
-    { done: companies.some((c) => c.story.trim().length > 20), label: "Wrote a two-minute story" },
-    { done: companies.some((c) => !!c.recommendation), label: "Set a call (Watch / Buy / Avoid)" },
-    {
-      done: companies.some((c) => (c.storyUpdates?.length ?? 0) > 0),
-      label: "Logged a story update",
-    },
-  ];
-  if (items.every((i) => i.done)) return null;
-
-  return (
-    <div className="hub-checklist">
-      <div className="hub-checklist-title">Getting started</div>
-      <ul>
-        {items.map((item) => (
-          <li key={item.label} className={item.done ? "done" : ""}>
-            <span className="check">{item.done ? "✓" : "○"}</span>
-            {item.label}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }

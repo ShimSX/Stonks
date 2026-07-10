@@ -7,25 +7,20 @@ interface Props {
   onCancel: () => void;
 }
 
-const STORY_PLACEHOLDER =
-  "What do they do? Why might it 10X? What must happen? Main risk?";
-
 export function QuickAddForm({ onSave, onCancel }: Props) {
   const [ticker, setTicker] = useState("");
-  const [name, setName] = useState("");
   const [story, setStory] = useState("");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const t = ticker.trim().toUpperCase();
-    const n = name.trim();
     const s = story.trim();
-    if (!t || !n || !s) return;
+    if (!t || !s) return;
 
     onSave({
       ...emptyCompany(),
       ticker: t,
-      name: n,
+      name: t,
       story: s,
       summary: s.slice(0, 160),
       updatedAt: new Date().toISOString().slice(0, 10),
@@ -35,7 +30,7 @@ export function QuickAddForm({ onSave, onCancel }: Props) {
   return (
     <form className="quick-add-form" onSubmit={handleSubmit}>
       <p className="quick-add-intro">
-        Three fields only. You can deepen the sheet later — product, customers, people, full checklist.
+        Two things: ticker and the story. Rename and dig deeper later.
       </p>
 
       <div className="field">
@@ -44,7 +39,7 @@ export function QuickAddForm({ onSave, onCancel }: Props) {
           id="qa-ticker"
           required
           maxLength={10}
-          placeholder="e.g. SHOP"
+          placeholder="TSLA"
           value={ticker}
           onChange={(e) => setTicker(e.target.value.toUpperCase())}
           autoFocus
@@ -52,33 +47,21 @@ export function QuickAddForm({ onSave, onCancel }: Props) {
       </div>
 
       <div className="field">
-        <label htmlFor="qa-name">Company name</label>
-        <input
-          id="qa-name"
-          required
-          placeholder="e.g. Shopify Inc."
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
-
-      <div className="field">
-        <label htmlFor="qa-story">Two-minute story</label>
-        <p className="help">The only thing that matters on day one.</p>
+        <label htmlFor="qa-story">Story</label>
         <textarea
           id="qa-story"
           required
           className="story-textarea"
-          placeholder={STORY_PLACEHOLDER}
+          placeholder="What do they do? Why care? What has to go right? Main risk?"
           value={story}
           onChange={(e) => setStory(e.target.value)}
-          rows={6}
+          rows={5}
         />
       </div>
 
       <div className="button-row">
         <button className="btn" type="submit">
-          Save company
+          Add to coverage
         </button>
         <button className="btn secondary" type="button" onClick={onCancel}>
           Cancel

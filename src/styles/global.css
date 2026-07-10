@@ -1744,3 +1744,258 @@ table.board .story-cell {
     display: none;
   }
 }
+
+/* ─── Ultra-simple story UI ─── */
+.page-simple .simple-header {
+  align-items: center;
+}
+
+.toolbar-simple {
+  margin-bottom: 20px;
+}
+
+.story-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.story-card {
+  min-height: auto;
+  height: auto;
+  padding: 18px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.story-card .coverage-logo {
+  display: none;
+}
+
+.story-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.story-card-name {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.story-card-latest {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--primary-soft);
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
+}
+
+.latest-dot {
+  width: 8px;
+  height: 8px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+.story-card-latest time {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 2px;
+}
+
+.story-card-latest p {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+.story-card-body {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+  flex: 1;
+}
+
+.story-card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  padding-top: 4px;
+}
+
+.drawer-simple .simple-head {
+  padding: 14px 16px;
+}
+
+.simple-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.drawer-logo-box.sm {
+  width: 36px;
+  height: 36px;
+}
+
+.ticker-lg {
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.min0 {
+  min-width: 0;
+}
+
+.simple-body {
+  padding-top: 12px;
+}
+
+.feed-block {
+  margin-bottom: 22px;
+}
+
+.feed-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.feed-hint {
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+.feed-compose {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.feed-compose input {
+  flex: 1;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  font-size: 14px;
+  outline: none;
+}
+
+.feed-compose input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.feed-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  padding: 12px 14px;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.feed-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-left: 2px solid var(--primary);
+  margin-left: 6px;
+}
+
+.feed-item {
+  padding: 10px 0 10px 14px;
+  position: relative;
+}
+
+.feed-item::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 16px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid var(--bg-elevated);
+}
+
+.feed-item time {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 3px;
+}
+
+.feed-item p {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+  margin: 0;
+}
+
+.thesis-block {
+  margin-bottom: 20px;
+}
+
+.story-main {
+  min-height: 110px;
+  font-size: 15px;
+}
+
+.autosave-hint {
+  font-size: 11px;
+  color: var(--text-soft);
+  margin-top: 6px;
+}
+
+.call-block {
+  margin-bottom: 8px;
+}
+
+.rec-row-simple {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.rec-chip.big {
+  padding: 12px 10px;
+  font-size: 14px;
+  justify-content: center;
+}
+
+.simple-actions {
+  justify-content: space-between;
+}
