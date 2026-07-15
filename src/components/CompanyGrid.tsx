@@ -109,7 +109,7 @@ export function CompanyGrid({
                       setMenuOpen(false);
                     }}
                   >
-                    Load sample names
+                    Add missing samples
                   </button>
                   <button
                     type="button"
@@ -119,7 +119,7 @@ export function CompanyGrid({
                       setMenuOpen(false);
                     }}
                   >
-                    Replace with sample
+                    Replace hub with samples
                   </button>
                 </div>
               </>

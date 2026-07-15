@@ -10,7 +10,7 @@ import { AuthModal } from "./components/AuthModal";
 import { CompareView } from "./components/CompareView";
 import { useCompanies } from "./hooks/useCompanies";
 import { useAuth } from "./hooks/useAuth";
-import { demoCompanies, parseImportPayload } from "./constants";
+import { demoCompanies, mergeDemoCoverage, parseImportPayload } from "./constants";
 import type { AppTab, Company } from "./types";
 import { downloadJson } from "./utils/download";
 import "./styles/global.css";
@@ -118,14 +118,16 @@ export default function App() {
   }
 
   function mergeSample() {
-    const existing = new Set(state.companies.map((c) => c.ticker));
-    const toAdd = demoCompanies.filter((c) => !existing.has(c.ticker));
-    if (!toAdd.length) {
-      showToast("All sample tickers already in your hub");
+    const { companies, added, filled } = mergeDemoCoverage(state.companies);
+    if (!added.length && !filled.length) {
+      showToast("All sample names already filled in your hub");
       return;
     }
-    replaceCompanies([...state.companies, ...structuredClone(toAdd)]);
-    showToast(`Added ${toAdd.length} sample companies`);
+    replaceCompanies(companies);
+    const parts: string[] = [];
+    if (added.length) parts.push(`added ${added.join(", ")}`);
+    if (filled.length) parts.push(`filled ${filled.join(", ")}`);
+    showToast(parts.join(" · "));
   }
 
   return (

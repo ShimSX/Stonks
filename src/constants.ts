@@ -3,6 +3,14 @@ import type { Company, LynchType } from "./types";
 /** Stable key — do not version-bump for content updates (that wipes user deletes/edits). */
 export const STORAGE_KEY = "ss-research-coverage";
 
+/**
+ * Bump when sample sheets gain new tickers or major fills.
+ * Used only to merge *missing* / *empty* demo rows into an existing hub —
+ * never wipes user-edited coverage.
+ */
+export const SAMPLE_SEED_KEY = "ss-research-sample-seed";
+export const SAMPLE_SEED_VERSION = 2; // 2 = SKHY full sheet + prior seven names
+
 /** Older keys we migrate from once, then leave alone. */
 export const LEGACY_STORAGE_KEYS = [
   "stunk-stonk-research-hub-v8",
@@ -704,6 +712,64 @@ base({
   }),
 
 ];
+
+/** True when a sheet has no two-minute story — safe to fill from sample. */
+export function isSparseCompany(company: Company): boolean {
+  return !String(company.story ?? "").trim();
+}
+
+/**
+ * Merge sample coverage into a hub without wiping user work:
+ * - adds demo tickers that are missing
+ * - fills demo tickers that exist but still have an empty story
+ * User-edited stories are left alone.
+ */
+export function mergeDemoCoverage(existing: Company[]): {
+  companies: Company[];
+  added: string[];
+  filled: string[];
+} {
+  const byTicker = new Map(existing.map((c) => [c.ticker.toUpperCase(), c]));
+  const added: string[] = [];
+  const filled: string[] = [];
+
+  for (const demo of demoCompanies) {
+    const ticker = demo.ticker.toUpperCase();
+    const current = byTicker.get(ticker);
+    if (!current) {
+      byTicker.set(ticker, structuredClone(demo));
+      added.push(ticker);
+      continue;
+    }
+    if (isSparseCompany(current)) {
+      const clone = structuredClone(demo);
+      byTicker.set(ticker, {
+        ...clone,
+        // Keep any story log the user already wrote on an empty shell
+        storyUpdates:
+          current.storyUpdates?.length > 0 ? current.storyUpdates : clone.storyUpdates,
+      });
+      filled.push(ticker);
+    }
+  }
+
+  const companies: Company[] = [];
+  const seen = new Set<string>();
+  for (const c of existing) {
+    const key = c.ticker.toUpperCase();
+    companies.push(byTicker.get(key) ?? c);
+    seen.add(key);
+  }
+  for (const demo of demoCompanies) {
+    const key = demo.ticker.toUpperCase();
+    if (!seen.has(key)) {
+      companies.push(byTicker.get(key)!);
+      seen.add(key);
+    }
+  }
+
+  return { companies, added, filled };
+}
 
 export function lynchLabel(type: LynchType): string {
   return lynchTypes.find((item) => item.value === type)?.label ?? "Not sure yet";

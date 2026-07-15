@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { demoCompanies, LEGACY_STORAGE_KEYS, STORAGE_KEY } from "../constants";
+import {
+  demoCompanies,
+  LEGACY_STORAGE_KEYS,
+  mergeDemoCoverage,
+  SAMPLE_SEED_KEY,
+  SAMPLE_SEED_VERSION,
+  STORAGE_KEY,
+} from "../constants";
 import type { AppState, Company, LynchType, Recommendation } from "../types";
 import {
   deleteCloudCompany,
@@ -67,6 +74,7 @@ export function useCompanies({ userId }: Options) {
   const [cloudError, setCloudError] = useState<string | null>(null);
   const cloudMode = Boolean(userId && hubId);
   const skipNextLocalPersist = useRef(false);
+  const sampleSeedApplied = useRef(false);
 
   // Local cache always (offline backup even when cloud)
   useEffect(() => {
@@ -79,6 +87,8 @@ export function useCompanies({ userId }: Options) {
   // Load cloud hub when user signs in / out
   useEffect(() => {
     let cancelled = false;
+    // Re-run sample seed after each cloud boot / sign-out restore
+    sampleSeedApplied.current = false;
 
     async function boot() {
       setCloudError(null);
@@ -148,6 +158,44 @@ export function useCompanies({ userId }: Options) {
       cancelled = true;
     };
   }, [userId]);
+
+  // After hub is ready: once per sample-seed version, add missing demos / fill empty stubs.
+  // Never overwrites a company that already has a story.
+  useEffect(() => {
+    if (!cloudReady || sampleSeedApplied.current) return;
+
+    const applied = Number(localStorage.getItem(SAMPLE_SEED_KEY) || "0");
+    if (applied >= SAMPLE_SEED_VERSION) {
+      sampleSeedApplied.current = true;
+      return;
+    }
+
+    sampleSeedApplied.current = true;
+
+    setState((current) => {
+      // Empty hub stays empty (user chose empty or hasn't started) — only mark seed done.
+      if (current.companies.length === 0) {
+        localStorage.setItem(SAMPLE_SEED_KEY, String(SAMPLE_SEED_VERSION));
+        return current;
+      }
+
+      const { companies, added, filled } = mergeDemoCoverage(current.companies);
+      localStorage.setItem(SAMPLE_SEED_KEY, String(SAMPLE_SEED_VERSION));
+
+      if (!added.length && !filled.length) {
+        return current;
+      }
+
+      if (cloudMode && hubId) {
+        void replaceCloudCompanies(hubId, companies).catch((err) => {
+          console.error(err);
+          setCloudError(err instanceof Error ? err.message : "Failed to sync sample updates");
+        });
+      }
+
+      return { ...current, companies };
+    });
+  }, [cloudReady, cloudMode, hubId]);
 
   const selectedCompany = useMemo(
     () => state.companies.find((company) => company.ticker === state.selected) ?? null,
