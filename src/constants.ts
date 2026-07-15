@@ -384,6 +384,102 @@ base({
     ],
   }),
 base({
+    ticker: "SKHY",
+    name: "SK hynix Inc.",
+    ceo: "Kwak Noh-Jung",
+    marketCap: "~$1.0T+",
+    category: "Memory & HBM semiconductors",
+    domain: "skhynix.com",
+    story:
+      "World’s leading HBM supplier (and a top DRAM maker) powering Nvidia-class AI accelerators. Multi-year story needs sustained HBM scarcity + capacity expansion without a classic memory ASP collapse. Main risk: boom-bust commodity cycle after a mega re-rating and record U.S. ADR listing.",
+    summary:
+      "South Korean memory pure-play designing and manufacturing DRAM, NAND, and high-bandwidth memory. Nasdaq ADR (SKHY) listed Jul 2026; primary listing remains KOSPI 000660.",
+    product:
+      "HBM stacks (HBM3E / ramping HBM4) that sit next to AI GPUs, plus conventional DRAM and NAND. Sells bits, bandwidth, and packaging yield — not a software platform.",
+    feedback:
+      "Hyperscalers and GPU partners care about HBM qualification, yield, delivery timing, and next-gen node readiness (HBM4 / HBM4E). OEM/channel buyers still swing with inventory and ASP cycles.",
+    market:
+      "AI is lifting HBM and server DRAM into a multi-year buildout, but the broader memory market remains cyclical and oligopolistic (SK hynix, Samsung, Micron).",
+    lynchType: "cyclical",
+    superiorCompany: "partial",
+    moat: "medium",
+    capSize: "large",
+    tenXPath: "weak",
+    peopleVector:
+      "Kwak is a deep memory-industry operator (not a founder mythos story). Culture is manufacturing-, yield-, and customer-qualification obsessed; chaebol ownership (SK Group) aligns capital for multi-year fab builds but is not founder skin-in-the-game.",
+    volatilityNote:
+      "Classic Lynch cyclical + narrative stock: would size up on a 30–50% drop only if HBM share, Nvidia/AMD qualifications, and supply discipline still look real — not if the story is only peak-cycle ASP euphoria post-ADR.",
+    bsChecklist: [
+      "Strong operators for a capital-intensive cyclical; not a founder-led story",
+      "10X from ~$1T is hard — multi-bagger path needs years of HBM leadership + no deep ASP crash, not one upcycle",
+      "HBM product has been best-in-class (early Nvidia quals); commodity DRAM/NAND is not unique",
+      "Customer/scuttlebutt edge: HBM attach, yield, and qualification timing vs Samsung/Micron",
+      "Best company in HBM for much of the AI cycle (~50–60% share class); not always #1 in total DRAM",
+      "Professional management under SK Group — real track record of HBM execution, limited personal founder ownership narrative",
+      "Executed the HBM lead vs Samsung/Micron when it mattered; must keep executing through HBM4 generation",
+      "Seek alpha: packaging capacity, HBM4 share, and whether ADR listing capital funds scarcity or oversupply",
+      "Samsung and Micron are the direct competitors; Nvidia/AMD set the HBM attach and can dual-source",
+    ],
+    pros: [
+      "Clear #1 HBM franchise into AI accelerators",
+      "Oligopoly memory structure with AI mix upgrade",
+      "Operating leverage and record profitability in the upcycle",
+      "ADR listing deepens U.S. investor access and funds capacity",
+    ],
+    cons: [
+      "Still a cyclical commodity at core when HBM gloss fades",
+      "Huge capex / technology race (fabs, EUV, advanced packaging)",
+      "Customer concentration in AI GPU platforms",
+      "Mega-cap + post-listing run — perfection often priced in",
+      "Not founder-led; chaebol / Korea geopolitics overlay",
+    ],
+    superiorCriteria: [
+      "Large and expanding memory TAM with AI HBM kicker",
+      "HBM leadership can be differentiated; bulk DRAM less so",
+      "World-class HBM execution evidence this cycle",
+      "Not founder-led — professional/chaebol governance",
+      "Balance sheet far stronger than past memory troughs; still cycle-sensitive and capex-hungry",
+      "Highly capital intensive",
+      "Not hated — loved AI infrastructure name after a historic run; classic peak-cycle risk",
+    ],
+    financials:
+      "Watch HBM revenue mix and share, HBM4 ramp, DRAM/NAND ASPs, gross margin, FCF vs capex, inventory days, and net debt. PEG is often useless mid-cycle; peak earnings and trough survival matter more. Fresh ADR proceeds should be tracked into fab/packaging capacity.",
+    catalysts:
+      "HBM4 qualifications and share vs Samsung/Micron, CEO commentary on 2027+ supply tightness, capacity online from new fabs/packaging (incl. U.S. packaging plans), next earnings ASP/mix print, post-ADR float and index inclusion flows.",
+    recommendation: "watch",
+    positionSize: "starter",
+    verdict:
+      "Best pure-play HBM story in the coverage set, inside a classic memory cyclical. Story intact if HBM stays scarce and SK keeps process/qualification lead — update hard when ASPs roll over or HBM share slips. Time is only on your side at a price that doesn’t assume permanent peak margins.",
+    thesis: [
+      "AI accelerators structurally raise HBM intensity per GPU generation",
+      "SK hynix’s early HBM lead and packaging know-how are hard to copy quickly",
+      "Memory oligopoly can earn excess returns when supply is disciplined",
+    ],
+    risks: [
+      "Memory price collapse in a classic downcycle",
+      "Losing HBM process/share race (HBM4) to Samsung or Micron",
+      "Hyperscaler / Nvidia capex pause",
+      "Capex overshoot turning IPO cash into oversupply",
+      "Geopolitics, Korea concentration, and chaebol governance surprises",
+      "Valuation mean-reversion after ADR listing and multi-year re-rating",
+    ],
+    sourceNotes:
+      "Nasdaq ADR SKHY listed ~Jul 10 2026 (record foreign ADR raise ~$26.5B class). KOSPI 000660 mkt cap ~KRW 1.3–1.5T class (~$1T+ USD). HBM share ~50–60% class (Counterpoint). Track HBM mix, ASPs, HBM4, and capacity use of IPO proceeds.",
+    updatedAt: "2026-07-15",
+    storyUpdates: [
+      {
+        id: "mkt-2026-07-15",
+        date: "2026-07-15",
+        note: "Jul 2026: U.S. ADR debut as SKHY after a blockbuster raise; equity story is AI HBM leader at mega-cap scale. CEO has flagged multi-year HBM tightness (incl. 2027 supply stress). Update ruthlessly if HBM share or ASPs roll — memory narratives overshoot both ways, and this name is no longer hated.",
+      },
+      {
+        id: "1",
+        date: "2026-07-15",
+        note: "Added to coverage as HBM #1 + DRAM oligopoly cyclical. Compare vs MU/SNDK: superior product position in HBM, weaker 10X path from ~$1T, higher peak-cycle narrative risk post-listing.",
+      },
+    ],
+  }),
+base({
     ticker: "SNDK",
     name: "Sandisk Corporation",
     ceo: "David Goeckeler",
