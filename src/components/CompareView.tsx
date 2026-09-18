@@ -175,7 +175,7 @@ export function CompareView({
                 type="button"
                 onClick={() => onOpenSheet(company.ticker)}
               >
-                Open sheet
+                Open story
               </button>
             </article>
           ))}

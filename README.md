@@ -15,15 +15,15 @@ Open the URL Vite prints (usually `http://localhost:5173`).
 
 ## What you get
 
-- **Research coverage grid** — company cards with story blurb, Lynch type, recommendation, sheet progress
-- **Story sheet** — full Stonk.MD framework per company (two-minute drill, BS checklist, superior criteria, financials, verdict)
-- **Story log** — note when the story changes (Lynch: update the sheet)
-- **Principles strip** — always-visible rotating reminders from your principles
-- **Principles page** — full framework map + checklists
-- **Coverage board** — table scan of every name under coverage
+- **Research coverage** — cards or table, search (`/` or ⌘K), type filter, recently-updated sort
+- **Story workspace** — feed of updates, two-minute story, Lynch type, then product/customers/people
+- **Quiet names** — coverage older than 45 days is marked so you remember to log a change
 - **Compare** — up to four company stories side by side (no fake charts)
-- **Export** — Stonk.MD (clipboard/download) and full JSON import/export
-- **Dark mode** · data in `localStorage` only
+- **Principles** — rotating strip plus the full framework map
+- **Export** — Stonk.MD (copy/download from a company) and full JSON import/export
+- **Dark mode** · data in `localStorage` (or your private cloud hub when signed in)
+
+Keyboard: `Esc` closes drawers, `/` or `⌘K` focuses search.
 
 ## Workflow
 

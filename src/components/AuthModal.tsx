@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEscape } from "../hooks/useEscape";
 
 interface Props {
   onClose: () => void;
@@ -16,6 +17,7 @@ export function AuthModal({ onClose, onSignIn, onSignUp, onMagicLink, error }: P
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [info, setInfo] = useState<string | null>(null);
+  useEscape(onClose);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

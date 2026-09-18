@@ -10,6 +10,7 @@ interface Props {
   userEmail: string | null;
   cloudMode: boolean;
   cloudReady: boolean;
+  compareCount: number;
   onSignInClick: () => void;
   onSignOut: () => void;
 }
@@ -30,6 +31,7 @@ export function Header({
   userEmail,
   cloudMode,
   cloudReady,
+  compareCount,
   onSignInClick,
   onSignOut,
 }: Props) {
@@ -48,6 +50,9 @@ export function Header({
             onClick={() => onTabChange(tab.id)}
           >
             {tab.label}
+            {tab.id === "compare" && compareCount > 0 && (
+              <span className="nav-count">{compareCount}</span>
+            )}
           </button>
         ))}
       </nav>
@@ -70,7 +75,7 @@ export function Header({
             )}
           </>
         )}
-        <button className="btn sm" type="button" onClick={onAdd}>
+        <button className="btn sm header-add" type="button" onClick={onAdd}>
           + Add company
         </button>
         <button

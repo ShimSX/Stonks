@@ -216,6 +216,9 @@ export function useCompanies({ userId }: Options) {
         company.category,
         company.ceo,
         company.verdict,
+        company.product,
+        company.market,
+        ...(company.storyUpdates ?? []).map((update) => update.note),
       ]
         .join(" ")
         .toLowerCase();
@@ -346,26 +349,12 @@ export function useCompanies({ userId }: Options) {
     setState((current) => ({ ...current, compareTickers: [] }));
   }, []);
 
-  const addStoryUpdate = useCallback(
-    (ticker: string, note: string) => {
-      const trimmed = note.trim();
-      if (!trimmed) return;
-
+  const patchCompany = useCallback(
+    (ticker: string, updater: (company: Company) => Company) => {
       setState((current) => {
         const companies = current.companies.map((company) => {
           if (company.ticker !== ticker) return company;
-          const updated: Company = {
-            ...company,
-            updatedAt: new Date().toISOString().slice(0, 10),
-            storyUpdates: [
-              {
-                id: crypto.randomUUID(),
-                date: new Date().toISOString().slice(0, 10),
-                note: trimmed,
-              },
-              ...(company.storyUpdates ?? []),
-            ],
-          };
+          const updated = updater(company);
           if (cloudMode && hubId) {
             void upsertCloudCompany(hubId, updated).catch((err) => {
               console.error(err);
@@ -378,6 +367,51 @@ export function useCompanies({ userId }: Options) {
       });
     },
     [cloudMode, hubId],
+  );
+
+  const addStoryUpdate = useCallback(
+    (ticker: string, note: string) => {
+      const trimmed = note.trim();
+      if (!trimmed) return;
+      const today = new Date().toISOString().slice(0, 10);
+      patchCompany(ticker, (company) => ({
+        ...company,
+        updatedAt: today,
+        storyUpdates: [
+          { id: crypto.randomUUID(), date: today, note: trimmed },
+          ...(company.storyUpdates ?? []),
+        ],
+      }));
+    },
+    [patchCompany],
+  );
+
+  const editStoryUpdate = useCallback(
+    (ticker: string, id: string, note: string) => {
+      const trimmed = note.trim();
+      if (!trimmed) return;
+      const today = new Date().toISOString().slice(0, 10);
+      patchCompany(ticker, (company) => ({
+        ...company,
+        updatedAt: today,
+        storyUpdates: (company.storyUpdates ?? []).map((item) =>
+          item.id === id ? { ...item, note: trimmed } : item,
+        ),
+      }));
+    },
+    [patchCompany],
+  );
+
+  const deleteStoryUpdate = useCallback(
+    (ticker: string, id: string) => {
+      const today = new Date().toISOString().slice(0, 10);
+      patchCompany(ticker, (company) => ({
+        ...company,
+        updatedAt: today,
+        storyUpdates: (company.storyUpdates ?? []).filter((item) => item.id !== id),
+      }));
+    },
+    [patchCompany],
   );
 
   return {
@@ -401,5 +435,7 @@ export function useCompanies({ userId }: Options) {
     toggleCompareTicker,
     clearCompare,
     addStoryUpdate,
+    editStoryUpdate,
+    deleteStoryUpdate,
   };
 }

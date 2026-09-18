@@ -8,6 +8,7 @@ import { QuickAddForm } from "./components/QuickAddForm";
 import { OnboardingModal, type HubStartMode } from "./components/OnboardingModal";
 import { AuthModal } from "./components/AuthModal";
 import { CompareView } from "./components/CompareView";
+import { AppFooter } from "./components/AppFooter";
 import { useCompanies } from "./hooks/useCompanies";
 import { useAuth } from "./hooks/useAuth";
 import { demoCompanies, mergeDemoCoverage, parseImportPayload } from "./constants";
@@ -42,10 +43,11 @@ export default function App() {
     setSearch,
     setSelected,
     setLynchFilter,
-    setRecFilter,
     toggleCompareTicker,
     clearCompare,
     addStoryUpdate,
+    editStoryUpdate,
+    deleteStoryUpdate,
   } = useCompanies({ userId: auth.user?.id ?? null });
 
   useEffect(() => {
@@ -62,6 +64,39 @@ export default function App() {
   useEffect(() => {
     if (cloudError) showToast(cloudError);
   }, [cloudError]);
+
+  useEffect(() => {
+    function isTypingTarget(target: EventTarget | null) {
+      if (!(target instanceof HTMLElement)) return false;
+      const tag = target.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable;
+    }
+
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        if (showAuth) {
+          setShowAuth(false);
+          return;
+        }
+        if (adding) setAdding(false);
+        return;
+      }
+
+      const meta = event.metaKey || event.ctrlKey;
+      const slash = event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey;
+      if ((meta && event.key.toLowerCase() === "k") || slash) {
+        if (slash && isTypingTarget(event.target)) return;
+        event.preventDefault();
+        setActiveTab("research");
+        window.requestAnimationFrame(() => {
+          document.getElementById("coverage-search")?.focus();
+        });
+      }
+    }
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [adding, showAuth]);
 
   // First-run: existing users with data skip the modal.
   useEffect(() => {
@@ -146,6 +181,7 @@ export default function App() {
         cloudMode={cloudMode}
         cloudReady={cloudReady}
         onSignInClick={() => setShowAuth(true)}
+        compareCount={state.compareTickers.length}
         onSignOut={async () => {
           await auth.signOut();
           showToast("Signed out — back to this browser only");
@@ -167,13 +203,12 @@ export default function App() {
         {activeTab === "research" && (
           <CompanyGrid
             companies={visibleCompanies}
+            allCompanies={state.companies}
             totalCount={state.companies.length}
             search={state.search}
             onSearch={setSearch}
             lynchFilter={state.lynchFilter}
             onLynchFilter={setLynchFilter}
-            recFilter={state.recFilter}
-            onRecFilter={setRecFilter}
             onSelect={setSelected}
             onDelete={(ticker) => {
               deleteCompany(ticker);
@@ -185,6 +220,16 @@ export default function App() {
               setSelected(null);
             }}
             selected={state.selected}
+            compareTickers={state.compareTickers}
+            onToggleCompare={(ticker) => {
+              const already = state.compareTickers.includes(ticker);
+              if (!already && state.compareTickers.length >= 4) {
+                showToast("Compare holds 4 names — remove one first");
+                return;
+              }
+              toggleCompareTicker(ticker);
+              showToast(already ? `${ticker} off compare` : `${ticker} added to compare`);
+            }}
             onExportAll={() => {
               downloadJson("ss-research-coverage.json", state.companies);
               showToast("Exported coverage JSON");
@@ -218,6 +263,7 @@ export default function App() {
         )}
 
         {activeTab === "principles" && <PrinciplesPanel />}
+        <AppFooter />
       </div>
 
       {selectedCompany && !adding && (
@@ -230,6 +276,8 @@ export default function App() {
             addStoryUpdate(selectedCompany.ticker, note);
             showToast("Story log updated");
           }}
+          onEditUpdate={(id, note) => editStoryUpdate(selectedCompany.ticker, id, note)}
+          onDeleteUpdate={(id) => deleteStoryUpdate(selectedCompany.ticker, id)}
           onToast={showToast}
         />
       )}
@@ -241,7 +289,7 @@ export default function App() {
             <div className="drawer-header">
               <div>
                 <h2>Add company</h2>
-                <div className="sub">Ticker + story. That&apos;s it.</div>
+                <div className="sub">Ticker, name, and a two-minute story.</div>
               </div>
               <button className="icon-btn" type="button" onClick={() => setAdding(false)}>
                 ✕
@@ -249,6 +297,7 @@ export default function App() {
             </div>
             <div className="drawer-body">
               <QuickAddForm
+                existingTickers={state.companies.map((company) => company.ticker)}
                 onSave={(c: Company) => {
                   saveCompany(c);
                   setAdding(false);
@@ -257,6 +306,11 @@ export default function App() {
                   showToast(`${c.ticker} added — keep the story honest`);
                 }}
                 onCancel={() => setAdding(false)}
+                onOpenExisting={(ticker) => {
+                  setAdding(false);
+                  setSelected(ticker);
+                  setActiveTab("research");
+                }}
               />
             </div>
           </aside>

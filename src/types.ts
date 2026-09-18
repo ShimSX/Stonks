@@ -60,6 +60,21 @@ export interface Company {
 
 export type AppTab = "research" | "compare" | "principles" | "board";
 
+export type ResearchView = "canvas" | "cards" | "table";
+
+export type PrincipleCheck = "yes" | "no" | "unsure" | "";
+
+/** A claim you pressure-test against the principles before it touches the story. */
+export interface ResearchIdea {
+  id: string;
+  text: string;
+  ticker: string | null;
+  checks: Record<string, PrincipleCheck>;
+  x: number;
+  y: number;
+  createdAt: string;
+}
+
 export interface AppState {
   companies: Company[];
   selected: string | null;
