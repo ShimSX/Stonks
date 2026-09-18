@@ -141,7 +141,6 @@ export function ResearchDesk({
         {selectedCompany ? (
           <div className="desk-sheet-wrap">
             <StoryWorkspace
-              variant="sheet"
               company={selectedCompany}
               onClose={() => onSelect(null)}
               onSave={onSave}
